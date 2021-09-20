@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from './Header';
+import BestBooks from './BestBooks';
+import Footer from './Footer';
+import axios from 'axios';
+// import { Route, Router, Switch } from 'react-router';
+const KEY = process.env.KEY;
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      id:0,
+      desciption:"",
+      email :"",
+      books:[],
+      status:""
+    }
+  }
+
+
+  componentDidMount = () => {
+    axios.get(`http://localhost:8001/books`).then(res => {
+     let dataget =res.data
+     let id=dataget[0]._id;
+     let email =dataget[0].email;
+     let desciption=dataget[0].book[0].description
+     let status = dataget[0].book[0].status
+
+     
+      this.setState({
+        data: dataget,
+        id:id,
+        desciption:desciption,
+        email:email,
+        status:status
+      });
+      
+      
+    }).catch((err) => { console.log(err) });
+  }
+
+  
+  render() {
+    return (
+      <>
+        <Header />
+          
+
+        <BestBooks id={this.state.id} 
+                  email={this.state.email}
+                  desciption={this.state.desciption}
+                  status={this.state.status}/>
+
+
+        <Footer />
+
+
+      </>
+    )
+  }
 }
 
-export default App;
+export default App
